@@ -1,5 +1,8 @@
 package com.xxl.job.admin.core.model;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +18,8 @@ import java.util.List;
 /**
  * Created by xuxueli on 16/9/30.
  */
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "xxl_job_group")
 public class XxlJobGroup {

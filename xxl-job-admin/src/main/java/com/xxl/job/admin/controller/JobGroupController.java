@@ -5,8 +5,8 @@ import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
-import com.xxl.job.admin.dao.XxlJobRegistryDao;
 import com.xxl.job.admin.service.XxlJobGroupService;
+import com.xxl.job.admin.service.XxlJobRegistryService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.RegistryConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * job group controller
@@ -35,8 +40,9 @@ public class JobGroupController {
 	public XxlJobInfoDao xxlJobInfoDao;
 	@Resource
 	public XxlJobGroupDao xxlJobGroupDao;
-	@Resource
-	private XxlJobRegistryDao xxlJobRegistryDao;
+
+	@Autowired
+	private XxlJobRegistryService registryService;
 
 	@RequestMapping
 	public String index(Model model) {
@@ -153,7 +159,7 @@ public class JobGroupController {
 
 	private List<String> findRegistryByAppName(String appnameParam){
 		HashMap<String, List<String>> appAddressMap = new HashMap<String, List<String>>();
-		List<XxlJobRegistry> list = xxlJobRegistryDao.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
+		List<XxlJobRegistry> list = registryService.findAll(RegistryConfig.DEAD_TIMEOUT, new Date());
 		if (list != null) {
 			for (XxlJobRegistry item: list) {
 				if (RegistryConfig.RegistType.EXECUTOR.name().equals(item.getRegistryGroup())) {

@@ -29,8 +29,12 @@ public class XxlJobGroupServiceImpl implements XxlJobGroupService {
 
     @Override
     public int save(XxlJobGroup xxlJobGroup) {
-        XxlJobGroup db = repository.save(xxlJobGroup);
-        return db == null ? 0 : 1;
+        try {
+            repository.save(xxlJobGroup);
+            return 1;
+        } catch (Exception e) {
+            return 0;
+        }
     }
 
     @Override

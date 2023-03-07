@@ -48,7 +48,7 @@ public class JobFailMonitorHelper {
 									continue;
 								}
 								XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().load(failLogId);
-								XxlJobInfo info = XxlJobAdminConfig.getAdminConfig().getXxlJobInfoDao().loadById(log.getJobId());
+								XxlJobInfo info = XxlJobAdminConfig.getAdminConfig().getInfoService().loadById(log.getJobId());
 
 								// 1、fail retry monitor
 								if (log.getExecutorFailRetryCount() > 0) {

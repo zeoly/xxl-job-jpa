@@ -81,9 +81,9 @@ public class JobLogReportHelper {
                             }
 
                             // do refresh
-                            int ret = XxlJobAdminConfig.getAdminConfig().getXxlJobLogReportDao().update(xxlJobLogReport);
+                            int ret = XxlJobAdminConfig.getAdminConfig().getLogReportService().update(xxlJobLogReport);
                             if (ret < 1) {
-                                XxlJobAdminConfig.getAdminConfig().getXxlJobLogReportDao().save(xxlJobLogReport);
+                                XxlJobAdminConfig.getAdminConfig().getLogReportService().save(xxlJobLogReport);
                             }
                         }
 

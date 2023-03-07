@@ -4,6 +4,9 @@ import com.xxl.job.admin.core.alarm.JobAlarmer;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.dao.*;
 import com.xxl.job.admin.service.XxlJobGroupService;
+import com.xxl.job.admin.service.XxlJobInfoService;
+import com.xxl.job.admin.service.XxlJobLogReportService;
+import com.xxl.job.admin.service.XxlJobRegistryService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,7 @@ import java.util.Arrays;
 public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     private static XxlJobAdminConfig adminConfig = null;
+
     public static XxlJobAdminConfig getAdminConfig() {
         return adminConfig;
     }
@@ -73,18 +77,25 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     @Resource
     private XxlJobLogDao xxlJobLogDao;
+
+    @Autowired
+    private XxlJobInfoService infoService;
+
     @Resource
     private XxlJobInfoDao xxlJobInfoDao;
-    @Resource
-    private XxlJobRegistryDao xxlJobRegistryDao;
+
+    @Autowired
+    private XxlJobRegistryService registryService;
+
     @Resource
     private XxlJobGroupDao xxlJobGroupDao;
 
     @Autowired
     private XxlJobGroupService groupService;
 
-    @Resource
-    private XxlJobLogReportDao xxlJobLogReportDao;
+    @Autowired
+    private XxlJobLogReportService logReportService;
+
     @Resource
     private JavaMailSender mailSender;
     @Resource
@@ -137,8 +148,12 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
         return xxlJobInfoDao;
     }
 
-    public XxlJobRegistryDao getXxlJobRegistryDao() {
-        return xxlJobRegistryDao;
+    public XxlJobInfoService getInfoService() {
+        return infoService;
+    }
+
+    public XxlJobRegistryService getRegistryService() {
+        return registryService;
     }
 
     public XxlJobGroupDao getXxlJobGroupDao() {
@@ -149,8 +164,8 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
         return groupService;
     }
 
-    public XxlJobLogReportDao getXxlJobLogReportDao() {
-        return xxlJobLogReportDao;
+    public XxlJobLogReportService getLogReportService() {
+        return logReportService;
     }
 
     public JavaMailSender getMailSender() {

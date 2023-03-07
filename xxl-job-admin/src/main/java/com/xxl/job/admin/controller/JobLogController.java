@@ -11,6 +11,7 @@ import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.admin.service.XxlJobGroupService;
+import com.xxl.job.admin.service.XxlJobInfoService;
 import com.xxl.job.core.biz.ExecutorBiz;
 import com.xxl.job.core.biz.model.KillParam;
 import com.xxl.job.core.biz.model.LogParam;
@@ -47,6 +48,10 @@ public class JobLogController {
 
 	@Resource
 	private XxlJobGroupDao xxlJobGroupDao;
+
+	@Autowired
+	private XxlJobInfoService infoService;
+
 	@Resource
 	public XxlJobInfoDao xxlJobInfoDao;
 	@Resource
@@ -68,7 +73,7 @@ public class JobLogController {
 
 		// 任务
 		if (jobId > 0) {
-			XxlJobInfo jobInfo = xxlJobInfoDao.loadById(jobId);
+			XxlJobInfo jobInfo = infoService.loadById(jobId);
 			if (jobInfo == null) {
 				throw new RuntimeException(I18nUtil.getString("jobinfo_field_id") + I18nUtil.getString("system_unvalid"));
 			}
@@ -85,7 +90,7 @@ public class JobLogController {
 	@RequestMapping("/getJobsByGroup")
 	@ResponseBody
 	public ReturnT<List<XxlJobInfo>> getJobsByGroup(int jobGroup){
-		List<XxlJobInfo> list = xxlJobInfoDao.getJobsByGroup(jobGroup);
+		List<XxlJobInfo> list = infoService.getJobsByGroup(jobGroup);
 		return new ReturnT<List<XxlJobInfo>>(list);
 	}
 	
@@ -167,7 +172,7 @@ public class JobLogController {
 	public ReturnT<String> logKill(int id){
 		// base check
 		XxlJobLog log = xxlJobLogDao.load(id);
-		XxlJobInfo jobInfo = xxlJobInfoDao.loadById(log.getJobId());
+		XxlJobInfo jobInfo = infoService.loadById(log.getJobId());
 		if (jobInfo==null) {
 			return new ReturnT<String>(500, I18nUtil.getString("jobinfo_glue_jobid_unvalid"));
 		}

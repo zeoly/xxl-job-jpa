@@ -87,9 +87,6 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     @Autowired
     private XxlJobRegistryService registryService;
 
-    @Resource
-    private XxlJobGroupDao xxlJobGroupDao;
-
     @Autowired
     private XxlJobGroupService groupService;
 
@@ -154,10 +151,6 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     public XxlJobRegistryService getRegistryService() {
         return registryService;
-    }
-
-    public XxlJobGroupDao getXxlJobGroupDao() {
-        return xxlJobGroupDao;
     }
 
     public XxlJobGroupService getGroupService() {

@@ -2,11 +2,21 @@ package com.xxl.job.admin.core.model;
 
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * @author xuxueli 2019-05-04 16:43:12
  */
+@Entity
+@Table(name = "xxl_job_user")
 public class XxlJobUser {
-	
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	private String username;		// 账号
 	private String password;		// 密码

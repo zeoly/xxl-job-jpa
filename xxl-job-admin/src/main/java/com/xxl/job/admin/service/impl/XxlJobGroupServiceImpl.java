@@ -4,6 +4,7 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.repo.XxlJobGroupRepository;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -71,12 +72,12 @@ public class XxlJobGroupServiceImpl implements XxlJobGroupService {
 
     @Override
     public List<XxlJobGroup> pageList(int offset, int pagesize, String appname, String title) {
-        return null;
+        return repository.findByAppnameContainingAndTitleContaining(appname, title, PageRequest.of(offset, pagesize, buildSort()));
     }
 
     @Override
     public int pageListCount(int offset, int pagesize, String appname, String title) {
-        return 0;
+        return repository.countByAppnameContainingAndTitleContaining(appname, title);
     }
 
     private Sort buildSort() {

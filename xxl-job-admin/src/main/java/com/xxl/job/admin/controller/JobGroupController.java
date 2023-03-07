@@ -3,7 +3,6 @@ package com.xxl.job.admin.controller;
 import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.core.model.XxlJobRegistry;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.XxlJobGroupDao;
 import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import com.xxl.job.admin.service.XxlJobRegistryService;
@@ -38,8 +37,6 @@ public class JobGroupController {
 
 	@Resource
 	public XxlJobInfoDao xxlJobInfoDao;
-	@Resource
-	public XxlJobGroupDao xxlJobGroupDao;
 
 	@Autowired
 	private XxlJobRegistryService registryService;
@@ -57,8 +54,8 @@ public class JobGroupController {
 										String appname, String title) {
 
 		// page query
-		List<XxlJobGroup> list = xxlJobGroupDao.pageList(start, length, appname, title);
-		int list_count = xxlJobGroupDao.pageListCount(start, length, appname, title);
+		List<XxlJobGroup> list = groupService.pageList(start, length, appname, title);
+		int list_count = groupService.pageListCount(start, length, appname, title);
 
 		// package result
 		Map<String, Object> maps = new HashMap<String, Object>();

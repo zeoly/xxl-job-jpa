@@ -4,12 +4,11 @@ import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.core.util.CookieUtil;
 import com.xxl.job.admin.core.util.I18nUtil;
 import com.xxl.job.admin.core.util.JacksonUtil;
-import com.xxl.job.admin.dao.XxlJobUserDao;
 import com.xxl.job.core.biz.model.ReturnT;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.DigestUtils;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigInteger;
@@ -22,9 +21,8 @@ public class LoginService {
 
     public static final String LOGIN_IDENTITY_KEY = "XXL_JOB_LOGIN_IDENTITY";
 
-    @Resource
-    private XxlJobUserDao xxlJobUserDao;
-
+    @Autowired
+    private XxlJobUserService userService;
 
     private String makeToken(XxlJobUser xxlJobUser){
         String tokenJson = JacksonUtil.writeValueAsString(xxlJobUser);
@@ -49,7 +47,7 @@ public class LoginService {
         }
 
         // valid passowrd
-        XxlJobUser xxlJobUser = xxlJobUserDao.loadByUserName(username);
+        XxlJobUser xxlJobUser = userService.loadByUserName(username);
         if (xxlJobUser == null) {
             return new ReturnT<String>(500, I18nUtil.getString("login_param_unvalid"));
         }
@@ -92,7 +90,7 @@ public class LoginService {
                 logout(request, response);
             }
             if (cookieUser != null) {
-                XxlJobUser dbUser = xxlJobUserDao.loadByUserName(cookieUser.getUsername());
+                XxlJobUser dbUser = userService.loadByUserName(cookieUser.getUsername());
                 if (dbUser != null) {
                     if (cookieUser.getPassword().equals(dbUser.getPassword())) {
                         return dbUser;

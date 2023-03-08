@@ -4,9 +4,13 @@ import com.xxl.job.admin.core.model.XxlJobUser;
 import com.xxl.job.admin.repo.XxlJobUserRepository;
 import com.xxl.job.admin.service.XxlJobUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,12 +22,26 @@ public class XxlJobUserServiceImpl implements XxlJobUserService {
 
     @Override
     public List<XxlJobUser> pageList(int offset, int pagesize, String username, int role) {
-        return null;
+        return repository.findAll(buildSpec(username, role), PageRequest.of(offset, pagesize, Sort.by("username"))).getContent();
     }
 
     @Override
     public int pageListCount(int offset, int pagesize, String username, int role) {
-        return 0;
+        return Long.valueOf(repository.count(buildSpec(username, role))).intValue();
+    }
+
+    private Specification<XxlJobUser> buildSpec(String username, int role) {
+        Specification<XxlJobUser> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (StringUtils.hasText(username)) {
+                predicate = criteriaBuilder.like(root.get("username"), "%" + username + "%");
+            }
+            if (role > -1) {
+                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), role));
+            }
+            return predicate;
+        };
+        return spec;
     }
 
     @Override

@@ -4,11 +4,15 @@ import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.repo.XxlJobLogRepository;
 import com.xxl.job.admin.service.XxlJobLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class XxlJobLogServiceImpl implements XxlJobLogService {
@@ -83,7 +87,14 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
 
     @Override
     public List<Long> findFailJobLogIds(int pagesize) {
-        return null;
+        Specification<XxlJobLog> spec = (root, query, cb) -> {
+            Predicate predicate = cb.in(root.get("triggerCode")).value(Arrays.asList(0, 200));
+            predicate = cb.and(cb.equal(root.get("handleCode"), 0), predicate);
+            predicate = cb.or(predicate, cb.equal(root.get("handleCode"), 200)).not();
+            predicate = cb.and(predicate, cb.equal(root.get("alarmStatus"), 0));
+            return predicate;
+        };
+        return repository.findAll(spec).stream().map(XxlJobLog::getId).collect(Collectors.toList());
     }
 
     @Override

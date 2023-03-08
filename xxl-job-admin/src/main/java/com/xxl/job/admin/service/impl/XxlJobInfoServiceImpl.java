@@ -6,8 +6,11 @@ import com.xxl.job.admin.service.XxlJobInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,12 +22,35 @@ public class XxlJobInfoServiceImpl implements XxlJobInfoService {
 
     @Override
     public List<XxlJobInfo> pageList(int offset, int pagesize, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
-        return null;
+        return repository.findAll(buildSpec(jobGroup, triggerStatus, jobDesc, executorHandler, author), PageRequest.of(offset, pagesize, Sort.by("id").descending())).getContent();
     }
 
     @Override
     public int pageListCount(int offset, int pagesize, int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
-        return 0;
+        return Long.valueOf(repository.count(buildSpec(jobGroup, triggerStatus, jobDesc, executorHandler, author))).intValue();
+    }
+
+    private Specification<XxlJobInfo> buildSpec(int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
+        Specification<XxlJobInfo> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (jobGroup > 0) {
+                predicate = criteriaBuilder.equal(root.get("jobGroup"), jobGroup);
+            }
+            if (triggerStatus >= 0) {
+                predicate = criteriaBuilder.equal(root.get("triggerStatus"), triggerStatus);
+            }
+            if (StringUtils.hasText(jobDesc)) {
+                predicate = criteriaBuilder.like(root.get("jobDesc"), "%" + jobDesc + "%");
+            }
+            if (StringUtils.hasText(executorHandler)) {
+                predicate = criteriaBuilder.like(root.get("executorHandler"), "%" + executorHandler + "%");
+            }
+            if (StringUtils.hasText(author)) {
+                predicate = criteriaBuilder.like(root.get("author"), "%" + author + "%");
+            }
+            return predicate;
+        };
+        return spec;
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.xxl.job.admin.core.model;
 
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.Date;
 
+@DynamicInsert
+@DynamicUpdate
 @Entity
 @Table(name = "xxl_job_log_report")
 public class XxlJobLogReport {

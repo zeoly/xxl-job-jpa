@@ -1,5 +1,7 @@
 package com.xxl.job.admin.core.model;
 
+import org.hibernate.annotations.DynamicInsert;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +14,7 @@ import java.util.Date;
  * xxl-job log for glue, used to track job code process
  * @author xuxueli 2016-5-19 17:57:46
  */
+@DynamicInsert
 @Entity
 @Table(name = "xxl_job_logglue")
 public class XxlJobLogGlue {

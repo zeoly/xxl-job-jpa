@@ -37,7 +37,8 @@ public class XxlJobUserServiceImpl implements XxlJobUserService {
                 predicate = criteriaBuilder.like(root.get("username"), "%" + username + "%");
             }
             if (role > -1) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), role));
+                Predicate rolePredicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), role));
+                predicate = predicate == null ? rolePredicate : criteriaBuilder.and(predicate, rolePredicate);
             }
             return predicate;
         };

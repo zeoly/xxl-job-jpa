@@ -37,16 +37,20 @@ public class XxlJobInfoServiceImpl implements XxlJobInfoService {
                 predicate = criteriaBuilder.equal(root.get("jobGroup"), jobGroup);
             }
             if (triggerStatus >= 0) {
-                predicate = criteriaBuilder.equal(root.get("triggerStatus"), triggerStatus);
+                Predicate status = criteriaBuilder.equal(root.get("triggerStatus"), triggerStatus);
+                predicate = predicate == null ? status : criteriaBuilder.and(predicate, status);
             }
             if (StringUtils.hasText(jobDesc)) {
-                predicate = criteriaBuilder.like(root.get("jobDesc"), "%" + jobDesc + "%");
+                Predicate desc = criteriaBuilder.like(root.get("jobDesc"), "%" + jobDesc + "%");
+                predicate = predicate == null ? desc : criteriaBuilder.and(predicate, desc);
             }
             if (StringUtils.hasText(executorHandler)) {
-                predicate = criteriaBuilder.like(root.get("executorHandler"), "%" + executorHandler + "%");
+                Predicate handler = criteriaBuilder.like(root.get("executorHandler"), "%" + executorHandler + "%");
+                predicate = predicate == null ? handler : criteriaBuilder.and(predicate, handler);
             }
             if (StringUtils.hasText(author)) {
-                predicate = criteriaBuilder.like(root.get("author"), "%" + author + "%");
+                Predicate authorPredicate = criteriaBuilder.like(root.get("author"), "%" + author + "%");
+                predicate = predicate == null ? authorPredicate : criteriaBuilder.and(predicate, authorPredicate);
             }
             return predicate;
         };

@@ -46,11 +46,5 @@ public class XxlJobLogReportServiceImpl implements XxlJobLogReportService {
     @Override
     public XxlJobLogReport queryLogReportTotal() {
         return repository.queryTotal();
-//        List<Long> list = repository.queryTotal();
-//        XxlJobLogReport report = new XxlJobLogReport();
-//        report.setRunningCount(list.get(0).intValue());
-//        report.setSucCount(list.get(1).intValue());
-//        report.setFailCount(list.get(2).intValue());
-//        return report;
     }
 }

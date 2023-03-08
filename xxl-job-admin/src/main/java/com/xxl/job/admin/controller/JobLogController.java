@@ -7,7 +7,6 @@ import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.dao.XxlJobLogDao;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import com.xxl.job.admin.service.XxlJobInfoService;
@@ -48,8 +47,6 @@ public class JobLogController {
 	@Autowired
 	private XxlJobInfoService infoService;
 
-	@Resource
-	public XxlJobInfoDao xxlJobInfoDao;
 	@Resource
 	public XxlJobLogDao xxlJobLogDao;
 

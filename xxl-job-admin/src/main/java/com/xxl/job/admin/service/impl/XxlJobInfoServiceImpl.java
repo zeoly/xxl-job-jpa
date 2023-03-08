@@ -102,7 +102,7 @@ public class XxlJobInfoServiceImpl implements XxlJobInfoService {
 
     @Override
     public List<XxlJobInfo> scheduleJobQuery(long maxNextTime, int pagesize) {
-        return repository.findByTriggerStatusAndTriggerNextTimeLessEqualThan(1, maxNextTime, PageRequest.of(1, pagesize, Sort.by("id")));
+        return repository.findByTriggerStatusAndTriggerNextTimeLessThanEqual(1, maxNextTime, PageRequest.of(1, pagesize, Sort.by("id")));
     }
 
     @Override

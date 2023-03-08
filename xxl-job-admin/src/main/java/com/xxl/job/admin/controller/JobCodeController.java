@@ -3,7 +3,6 @@ package com.xxl.job.admin.controller;
 import com.xxl.job.admin.core.model.XxlJobInfo;
 import com.xxl.job.admin.core.model.XxlJobLogGlue;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.XxlJobInfoDao;
 import com.xxl.job.admin.service.XxlJobInfoService;
 import com.xxl.job.admin.service.XxlJobLogGlueService;
 import com.xxl.job.core.biz.model.ReturnT;
@@ -14,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +25,6 @@ import java.util.List;
 @Controller
 @RequestMapping("/jobcode")
 public class JobCodeController {
-
-    @Resource
-    private XxlJobInfoDao xxlJobInfoDao;
 
     @Autowired
     private XxlJobInfoService infoService;

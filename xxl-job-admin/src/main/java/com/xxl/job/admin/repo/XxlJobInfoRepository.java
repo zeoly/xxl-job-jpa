@@ -11,5 +11,5 @@ public interface XxlJobInfoRepository extends JpaRepository<XxlJobInfo, Integer>
 
     List<XxlJobInfo> findByJobGroup(int jobGroup);
 
-    List<XxlJobInfo> findByTriggerStatusAndTriggerNextTimeLessEqualThan(int triggerStatus, long triggerNextTime, Pageable pageable);
+    List<XxlJobInfo> findByTriggerStatusAndTriggerNextTimeLessThanEqual(int triggerStatus, long triggerNextTime, Pageable pageable);
 }

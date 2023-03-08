@@ -4,10 +4,12 @@ import com.xxl.job.admin.core.model.XxlJobGroup;
 import com.xxl.job.admin.repo.XxlJobGroupRepository;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+import javax.persistence.criteria.Predicate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -72,12 +74,27 @@ public class XxlJobGroupServiceImpl implements XxlJobGroupService {
 
     @Override
     public List<XxlJobGroup> pageList(int offset, int pagesize, String appname, String title) {
-        return repository.findByAppnameContainingAndTitleContaining(appname, title, PageRequest.of(offset, pagesize, buildSort()));
+        return repository.findAll(buildSpec(appname, title), buildSort());
     }
 
     @Override
     public int pageListCount(int offset, int pagesize, String appname, String title) {
-        return repository.countByAppnameContainingAndTitleContaining(appname, title);
+        return Long.valueOf(repository.count(buildSpec(appname, title))).intValue();
+    }
+
+    private Specification<XxlJobGroup> buildSpec(String appname, String title) {
+        Specification<XxlJobGroup> spec = (root, query, criteriaBuilder) -> {
+            Predicate predicate = null;
+            if (StringUtils.hasText(appname)) {
+                predicate = criteriaBuilder.like(root.get("appname"), "%" + appname + "%");
+            }
+            if (StringUtils.hasText(title)) {
+                Predicate titlePredicate = criteriaBuilder.like(root.get("title"), "%" + title + "%");
+                predicate = predicate == null ? titlePredicate : criteriaBuilder.and(predicate, titlePredicate);
+            }
+            return predicate;
+        };
+        return spec;
     }
 
     private Sort buildSort() {

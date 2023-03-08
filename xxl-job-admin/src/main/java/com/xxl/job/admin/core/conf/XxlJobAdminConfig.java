@@ -81,9 +81,6 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
     @Autowired
     private XxlJobInfoService infoService;
 
-    @Resource
-    private XxlJobInfoDao xxlJobInfoDao;
-
     @Autowired
     private XxlJobRegistryService registryService;
 
@@ -139,10 +136,6 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     public XxlJobLogDao getXxlJobLogDao() {
         return xxlJobLogDao;
-    }
-
-    public XxlJobInfoDao getXxlJobInfoDao() {
-        return xxlJobInfoDao;
     }
 
     public XxlJobInfoService getInfoService() {

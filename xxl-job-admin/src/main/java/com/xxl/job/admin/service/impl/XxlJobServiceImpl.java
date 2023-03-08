@@ -43,8 +43,6 @@ public class XxlJobServiceImpl implements XxlJobService {
 	private XxlJobInfoService infoService;
 
 	@Resource
-	private XxlJobInfoDao xxlJobInfoDao;
-	@Resource
 	public XxlJobLogDao xxlJobLogDao;
 
 	@Autowired

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,15 +33,14 @@ public class XxlJobUserServiceImpl implements XxlJobUserService {
 
     private Specification<XxlJobUser> buildSpec(String username, int role) {
         Specification<XxlJobUser> spec = (root, query, criteriaBuilder) -> {
-            Predicate predicate = null;
+            List<Predicate> list = new ArrayList<>();
             if (StringUtils.hasText(username)) {
-                predicate = criteriaBuilder.like(root.get("username"), "%" + username + "%");
+                list.add(criteriaBuilder.like(root.get("username"), "%" + username + "%"));
             }
             if (role > -1) {
-                Predicate rolePredicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("role"), role));
-                predicate = predicate == null ? rolePredicate : criteriaBuilder.and(predicate, rolePredicate);
+                list.add(criteriaBuilder.equal(root.get("role"), role));
             }
-            return predicate;
+            return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
         };
         return spec;
     }

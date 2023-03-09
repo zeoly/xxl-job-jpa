@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,27 +33,23 @@ public class XxlJobInfoServiceImpl implements XxlJobInfoService {
 
     private Specification<XxlJobInfo> buildSpec(int jobGroup, int triggerStatus, String jobDesc, String executorHandler, String author) {
         Specification<XxlJobInfo> spec = (root, query, criteriaBuilder) -> {
-            Predicate predicate = null;
+            List<Predicate> list = new ArrayList<>();
             if (jobGroup > 0) {
-                predicate = criteriaBuilder.equal(root.get("jobGroup"), jobGroup);
+                list.add(criteriaBuilder.equal(root.get("jobGroup"), jobGroup));
             }
             if (triggerStatus >= 0) {
-                Predicate status = criteriaBuilder.equal(root.get("triggerStatus"), triggerStatus);
-                predicate = predicate == null ? status : criteriaBuilder.and(predicate, status);
+                list.add(criteriaBuilder.equal(root.get("triggerStatus"), triggerStatus));
             }
             if (StringUtils.hasText(jobDesc)) {
-                Predicate desc = criteriaBuilder.like(root.get("jobDesc"), "%" + jobDesc + "%");
-                predicate = predicate == null ? desc : criteriaBuilder.and(predicate, desc);
+                list.add(criteriaBuilder.like(root.get("jobDesc"), "%" + jobDesc + "%"));
             }
             if (StringUtils.hasText(executorHandler)) {
-                Predicate handler = criteriaBuilder.like(root.get("executorHandler"), "%" + executorHandler + "%");
-                predicate = predicate == null ? handler : criteriaBuilder.and(predicate, handler);
+                list.add(criteriaBuilder.like(root.get("executorHandler"), "%" + executorHandler + "%"));
             }
             if (StringUtils.hasText(author)) {
-                Predicate authorPredicate = criteriaBuilder.like(root.get("author"), "%" + author + "%");
-                predicate = predicate == null ? authorPredicate : criteriaBuilder.and(predicate, authorPredicate);
+                list.add(criteriaBuilder.like(root.get("author"), "%" + author + "%"));
             }
-            return predicate;
+            return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
         };
         return spec;
     }

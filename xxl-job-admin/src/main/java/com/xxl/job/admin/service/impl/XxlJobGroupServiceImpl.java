@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -84,15 +85,14 @@ public class XxlJobGroupServiceImpl implements XxlJobGroupService {
 
     private Specification<XxlJobGroup> buildSpec(String appname, String title) {
         Specification<XxlJobGroup> spec = (root, query, criteriaBuilder) -> {
-            Predicate predicate = null;
+            List<Predicate> list = new ArrayList<>();
             if (StringUtils.hasText(appname)) {
-                predicate = criteriaBuilder.like(root.get("appname"), "%" + appname + "%");
+                list.add(criteriaBuilder.like(root.get("appname"), "%" + appname + "%"));
             }
             if (StringUtils.hasText(title)) {
-                Predicate titlePredicate = criteriaBuilder.like(root.get("title"), "%" + title + "%");
-                predicate = predicate == null ? titlePredicate : criteriaBuilder.and(predicate, titlePredicate);
+                list.add(criteriaBuilder.like(root.get("title"), "%" + title + "%"));
             }
-            return predicate;
+            return criteriaBuilder.and(list.toArray(new Predicate[list.size()]));
         };
         return spec;
     }

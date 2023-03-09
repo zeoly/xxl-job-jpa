@@ -8,6 +8,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.criteria.Predicate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,35 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
     @Override
     public int pageListCount(int offset, int pagesize, int jobGroup, int jobId, Date triggerTimeStart, Date triggerTimeEnd, int logStatus) {
         return 0;
+    }
+
+    private Specification<XxlJobLog> buildSpec(int jobGroup, int jobId, Date triggerTimeStart, Date triggerTimeEnd, int logStatus) {
+        Specification specification = (root, query, cb) -> {
+            List<Predicate> list = new ArrayList<>();
+            if (jobId == 0 && jobGroup > 0) {
+                list.add(cb.equal(root.get("jobGroup"), jobGroup));
+            }
+            if (jobId > 0) {
+                list.add(cb.equal(root.get("jobId"), jobId));
+            }
+            if (triggerTimeStart != null) {
+                list.add(cb.greaterThanOrEqualTo(root.get("triggerTimeStart"), triggerTimeStart));
+            }
+            if (triggerTimeEnd != null) {
+                list.add(cb.lessThanOrEqualTo(root.get("triggerTimeEnd"), triggerTimeEnd));
+            }
+            if (logStatus == 1) {
+                list.add(cb.equal(root.get("handleCode"), 200));
+            }
+            if (logStatus == 2) {
+                list.add(cb.or(cb.in(root.get("triggerCode")).value(Arrays.asList(0, 200)).not(), cb.in(root.get("handleCode")).value(Arrays.asList(0, 200)).not()));
+            }
+            if (logStatus == 3) {
+                list.add(cb.and(cb.equal(root.get("triggerCode"), 200), cb.equal(root.get("handleCode"), 0)));
+            }
+            return cb.and(list.toArray(new Predicate[list.size()]));
+        };
+        return specification;
     }
 
     @Override
@@ -61,6 +91,14 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
 
     @Override
     public int updateHandleInfo(XxlJobLog xxlJobLog) {
+        XxlJobLog db = repository.findById(xxlJobLog.getId()).orElse(null);
+        if (db != null) {
+            db.setHandleTime(xxlJobLog.getHandleTime());
+            db.setHandleCode(xxlJobLog.getHandleCode());
+            db.setHandleMsg(xxlJobLog.getHandleMsg());
+            repository.save(db);
+            return 1;
+        }
         return 0;
     }
 

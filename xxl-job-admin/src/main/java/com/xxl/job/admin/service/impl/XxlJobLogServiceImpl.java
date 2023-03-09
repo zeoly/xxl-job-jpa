@@ -4,6 +4,8 @@ import com.xxl.job.admin.core.model.XxlJobLog;
 import com.xxl.job.admin.repo.XxlJobLogRepository;
 import com.xxl.job.admin.service.XxlJobLogService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +13,7 @@ import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,12 +26,13 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
 
     @Override
     public List<XxlJobLog> pageList(int offset, int pagesize, int jobGroup, int jobId, Date triggerTimeStart, Date triggerTimeEnd, int logStatus) {
-        return null;
+        return repository.findAll(buildSpec(jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus),
+                PageRequest.of(offset, pagesize, Sort.by("triggerTime").descending())).getContent();
     }
 
     @Override
     public int pageListCount(int offset, int pagesize, int jobGroup, int jobId, Date triggerTimeStart, Date triggerTimeEnd, int logStatus) {
-        return 0;
+        return Long.valueOf(repository.count(buildSpec(jobGroup, jobId, triggerTimeStart, triggerTimeEnd, logStatus))).intValue();
     }
 
     private Specification<XxlJobLog> buildSpec(int jobGroup, int jobId, Date triggerTimeStart, Date triggerTimeEnd, int logStatus) {
@@ -41,10 +45,10 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
                 list.add(cb.equal(root.get("jobId"), jobId));
             }
             if (triggerTimeStart != null) {
-                list.add(cb.greaterThanOrEqualTo(root.get("triggerTimeStart"), triggerTimeStart));
+                list.add(cb.greaterThanOrEqualTo(root.get("triggerTime"), triggerTimeStart));
             }
             if (triggerTimeEnd != null) {
-                list.add(cb.lessThanOrEqualTo(root.get("triggerTimeEnd"), triggerTimeEnd));
+                list.add(cb.lessThanOrEqualTo(root.get("triggerTime"), triggerTimeEnd));
             }
             if (logStatus == 1) {
                 list.add(cb.equal(root.get("handleCode"), 200));
@@ -109,12 +113,34 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
 
     @Override
     public Map<String, Object> findLogReport(Date from, Date to) {
-        return null;
+        Map<String, Object> result = new HashMap<>();
+        result.put("triggerDayCount", repository.countByTriggerTimeBetween(from, to));
+        result.put("triggerDayCountRunning", repository.countByTriggerCodeInAndHandleCode(Arrays.asList(0, 200), 0));
+        result.put("triggerDayCountSuc", repository.countByHandleCode(200));
+        return result;
     }
 
     @Override
     public List<Long> findClearLogIds(int jobGroup, int jobId, Date clearBeforeTime, int clearBeforeNum, int pagesize) {
-        return null;
+        Specification spec = (root, query, cb) -> {
+            List<Predicate> list = new ArrayList<>();
+            if (jobGroup > 0) {
+                list.add(cb.equal(root.get("jobGroup"), jobGroup));
+            }
+            if (jobId > 0) {
+                list.add(cb.equal(root.get("jobId"), jobId));
+            }
+            if (clearBeforeTime != null) {
+                list.add(cb.lessThanOrEqualTo(root.get("triggerTime"), clearBeforeTime));
+            }
+            if (clearBeforeNum > 0) {
+                List<XxlJobLog> keepList = pageList(0, clearBeforeNum, jobGroup, jobId, null, null, 0);
+                List<Long> idList = keepList.stream().map(XxlJobLog::getId).collect(Collectors.toList());
+                list.add(cb.in(root.get("id")).value(idList).not());
+            }
+            return cb.and(list.toArray(new Predicate[list.size()]));
+        };
+        return repository.findAll(spec, PageRequest.of(0, pagesize, Sort.by("id"))).getContent();
     }
 
     @Override
@@ -149,6 +175,6 @@ public class XxlJobLogServiceImpl implements XxlJobLogService {
 
     @Override
     public List<Long> findLostJobIds(Date losedTime) {
-        return null;
+        return repository.findLostJobIds(losedTime).stream().map(XxlJobLog::getId).collect(Collectors.toList());
     }
 }

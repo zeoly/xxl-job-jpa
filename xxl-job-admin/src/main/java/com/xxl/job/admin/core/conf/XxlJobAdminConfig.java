@@ -2,10 +2,10 @@ package com.xxl.job.admin.core.conf;
 
 import com.xxl.job.admin.core.alarm.JobAlarmer;
 import com.xxl.job.admin.core.scheduler.XxlJobScheduler;
-import com.xxl.job.admin.dao.*;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import com.xxl.job.admin.service.XxlJobInfoService;
 import com.xxl.job.admin.service.XxlJobLogReportService;
+import com.xxl.job.admin.service.XxlJobLogService;
 import com.xxl.job.admin.service.XxlJobRegistryService;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -75,8 +75,8 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
 
     // dao, service
 
-    @Resource
-    private XxlJobLogDao xxlJobLogDao;
+    @Autowired
+    private XxlJobLogService logService;
 
     @Autowired
     private XxlJobInfoService infoService;
@@ -134,8 +134,8 @@ public class XxlJobAdminConfig implements InitializingBean, DisposableBean {
         return logretentiondays;
     }
 
-    public XxlJobLogDao getXxlJobLogDao() {
-        return xxlJobLogDao;
+    public XxlJobLogService getLogService() {
+        return logService;
     }
 
     public XxlJobInfoService getInfoService() {

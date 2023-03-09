@@ -36,7 +36,7 @@ public class XxlJobCompleter {
         }
 
         // fresh handle
-        return XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateHandleInfo(xxlJobLog);
+        return XxlJobAdminConfig.getAdminConfig().getLogService().updateHandleInfo(xxlJobLog);
     }
 
 

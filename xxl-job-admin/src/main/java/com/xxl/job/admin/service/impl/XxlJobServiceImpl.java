@@ -9,11 +9,11 @@ import com.xxl.job.admin.core.scheduler.MisfireStrategyEnum;
 import com.xxl.job.admin.core.scheduler.ScheduleTypeEnum;
 import com.xxl.job.admin.core.thread.JobScheduleHelper;
 import com.xxl.job.admin.core.util.I18nUtil;
-import com.xxl.job.admin.dao.*;
 import com.xxl.job.admin.service.XxlJobGroupService;
 import com.xxl.job.admin.service.XxlJobInfoService;
 import com.xxl.job.admin.service.XxlJobLogGlueService;
 import com.xxl.job.admin.service.XxlJobLogReportService;
+import com.xxl.job.admin.service.XxlJobLogService;
 import com.xxl.job.admin.service.XxlJobService;
 import com.xxl.job.core.biz.model.ReturnT;
 import com.xxl.job.core.enums.ExecutorBlockStrategyEnum;
@@ -24,9 +24,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * core job action for xxl-job
@@ -42,8 +47,8 @@ public class XxlJobServiceImpl implements XxlJobService {
 	@Autowired
 	private XxlJobInfoService infoService;
 
-	@Resource
-	public XxlJobLogDao xxlJobLogDao;
+	@Autowired
+	private XxlJobLogService logService;
 
 	@Autowired
 	private XxlJobLogGlueService logGlueService;
@@ -304,7 +309,7 @@ public class XxlJobServiceImpl implements XxlJobService {
 		}
 
 		infoService.delete(id);
-		xxlJobLogDao.delete(id);
+		logService.delete(id);
 		logGlueService.deleteByJobId(id);
 		return ReturnT.SUCCESS;
 	}

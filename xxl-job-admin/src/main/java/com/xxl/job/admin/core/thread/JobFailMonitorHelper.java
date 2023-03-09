@@ -38,16 +38,16 @@ public class JobFailMonitorHelper {
 				while (!toStop) {
 					try {
 
-						List<Long> failLogIds = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().findFailJobLogIds(1000);
+						List<Long> failLogIds = XxlJobAdminConfig.getAdminConfig().getLogService().findFailJobLogIds(1000);
 						if (failLogIds!=null && !failLogIds.isEmpty()) {
 							for (long failLogId: failLogIds) {
 
 								// lock log
-								int lockRet = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateAlarmStatus(failLogId, 0, -1);
+								int lockRet = XxlJobAdminConfig.getAdminConfig().getLogService().updateAlarmStatus(failLogId, 0, -1);
 								if (lockRet < 1) {
 									continue;
 								}
-								XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().load(failLogId);
+								XxlJobLog log = XxlJobAdminConfig.getAdminConfig().getLogService().load(failLogId);
 								XxlJobInfo info = XxlJobAdminConfig.getAdminConfig().getInfoService().loadById(log.getJobId());
 
 								// 1、fail retry monitor
@@ -55,7 +55,7 @@ public class JobFailMonitorHelper {
 									JobTriggerPoolHelper.trigger(log.getJobId(), TriggerTypeEnum.RETRY, (log.getExecutorFailRetryCount()-1), log.getExecutorShardingParam(), log.getExecutorParam(), null);
 									String retryMsg = "<br><br><span style=\"color:#F39C12;\" > >>>>>>>>>>>"+ I18nUtil.getString("jobconf_trigger_type_retry") +"<<<<<<<<<<< </span><br>";
 									log.setTriggerMsg(log.getTriggerMsg() + retryMsg);
-									XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateTriggerInfo(log);
+									XxlJobAdminConfig.getAdminConfig().getLogService().updateTriggerInfo(log);
 								}
 
 								// 2、fail alarm monitor
@@ -67,7 +67,7 @@ public class JobFailMonitorHelper {
 									newAlarmStatus = 1;
 								}
 
-								XxlJobAdminConfig.getAdminConfig().getXxlJobLogDao().updateAlarmStatus(failLogId, -1, newAlarmStatus);
+								XxlJobAdminConfig.getAdminConfig().getLogService().updateAlarmStatus(failLogId, -1, newAlarmStatus);
 							}
 						}
 
